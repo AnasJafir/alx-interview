@@ -4,37 +4,41 @@
 
 def canUnlockAll(boxes):
     """
-    Determines if all the boxes can be opened.
+    Check if all boxes can be opened.
 
     Args:
-        boxes (list): list of lists, where each sublist contains
-        the boxes that can be opened with the corresponding box.
+        boxes (list): A list of lists
+        where boxes[i] is a list of keys that can open box i.
 
     Returns:
-        bool: True if all boxes can be opened, else False
+        bool: True if all boxes can be opened, False otherwise.
     """
 
-    # Set of boxes that have been opened
-    opened_boxes = set()
-    # Add the first box to the set of opened boxes
-    opened_boxes.add(0)
-    # List of boxes to check
-    to_check = []
-    # Add the boxes that can be opened with the
-    # first box to the list of boxes to check
-    to_check.extend(boxes[0])
+    # Initialize opened_boxes and used_keys
+    opened_boxes = set([0])
+    used_keys = set()
 
-    # Loop until there are no more boxes to check
-    while to_check:
-        # Get the next box to check
-        box = to_check.pop(0)
-        # If the box has not been opened already
-        # add it to the set of opened boxes and add the boxes
-        # that can be opened with it to the list of boxes to check
-        if box not in opened_boxes:
-            opened_boxes.add(box)
-            to_check.extend(boxes[box])
+    # Initialize queue with the first box
+    queue = [0]
 
-    # If the number of boxes is equal to the number of opened boxes
-    # all boxes can be opened, else they cannot
-    return len(boxes) == len(opened_boxes)
+    # BFS
+    while queue:
+        # Pop the current_box from the queue
+        current_box = queue.pop(0)
+
+        # Add the current_box to used_keys
+        used_keys.add(current_box)
+
+        # Iterate over the keys of the current_box
+        for key in boxes[current_box]:
+            # If the key has not been used
+            if key not in used_keys:
+                # If the key is a valid box and it has not been opened
+                if key < len(boxes) and key not in opened_boxes:
+                    # Add the key to opened_boxes
+                    opened_boxes.add(key)
+                    # Add the key to queue
+                    queue.append(key)
+
+    # Return True if all boxes can be opened, False otherwise
+    return len(used_keys) == len(boxes)
