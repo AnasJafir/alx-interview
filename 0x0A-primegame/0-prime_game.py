@@ -1,51 +1,42 @@
 #!/usr/bin/python3
-"""
-Module for the isWinner function.
-"""
-
-
-def sieve_of_eratosthenes(limit):
-    """
-    Return a list of prime numbers up to a limit
-    using the Sieve of Eratosthenes algorithm.
-    """
-    is_prime = [True] * (limit + 1)
-    is_prime[0] = is_prime[1] = False
-    p = 2
-    while p * p <= limit:
-        if is_prime[p]:
-            for i in range(p * p, limit + 1, p):
-                is_prime[i] = False
-        p += 1
-    return [p for p in range(2, limit + 1) if is_prime[p]]
+""" This is the main file for the game """
 
 
 def isWinner(x, nums):
     """
-    Return the winner of the game.
+    x is the number of rounds and nums is an array of n
     """
-    if x == 0:
+    if x <= 0 or nums is None:
         return None
-    max_n = max(nums)
-    primes = sieve_of_eratosthenes(max_n)
-    dp = [False] * (max_n + 1)
-    for i in range(1, max_n + 1):
-        for prime in primes:
-            if prime > i:
-                break
-            if not dp[i - prime]:
-                dp[i] = True
-                break
-    maria_wins = 0
-    ben_wins = 0
-    for n in nums:
-        if dp[n]:
-            maria_wins += 1
+    if x != len(nums):
+        return None
+
+    ben = 0
+    maria = 0
+
+    a = [1 for x in range(sorted(nums)[-1] + 1)]
+    a[0], a[1] = 0, 0
+    for i in range(2, len(a)):
+        rm_multiples(a, i)
+
+    for i in nums:
+        if sum(a[0:i + 1]) % 2 == 0:
+            ben += 1
         else:
-            ben_wins += 1
-    if maria_wins > ben_wins:
-        return "Maria"
-    elif ben_wins > maria_wins:
+            maria += 1
+    if ben > maria:
         return "Ben"
-    else:
-        return None
+    if maria > ben:
+        return "Maria"
+    return None
+
+
+def rm_multiples(ls, x):
+    """
+    Remove multiples of x from ls
+    """
+    for i in range(2, len(ls)):
+        try:
+            ls[i * x] = 0
+        except (ValueError, IndexError):
+            break
