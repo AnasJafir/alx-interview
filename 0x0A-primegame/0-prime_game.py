@@ -1,14 +1,16 @@
 #!/usr/bin/python3
 """
-Primary module for the game.
+Module for the isWinner function.
 """
 
 
 def sieve_of_eratosthenes(limit):
     """
-    method to generate all prime numbers less than or equal to limit
+    Return a list of prime numbers up to a limit
+    using the Sieve of Eratosthenes algorithm.
     """
     is_prime = [True] * (limit + 1)
+    is_prime[0] = is_prime[1] = False
     p = 2
     while p * p <= limit:
         if is_prime[p]:
@@ -20,16 +22,13 @@ def sieve_of_eratosthenes(limit):
 
 def isWinner(x, nums):
     """
-    method to determine the winner of the game
+    Return the winner of the game.
     """
     if x == 0:
         return None
-
     max_n = max(nums)
     primes = sieve_of_eratosthenes(max_n)
-
     dp = [False] * (max_n + 1)
-
     for i in range(1, max_n + 1):
         for prime in primes:
             if prime > i:
@@ -37,16 +36,13 @@ def isWinner(x, nums):
             if not dp[i - prime]:
                 dp[i] = True
                 break
-
     maria_wins = 0
     ben_wins = 0
-
     for n in nums:
         if dp[n]:
             maria_wins += 1
         else:
             ben_wins += 1
-
     if maria_wins > ben_wins:
         return "Maria"
     elif ben_wins > maria_wins:
